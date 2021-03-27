@@ -8,8 +8,6 @@ PREREQUISITES:
 
 ->Wi-fi router 
 
-->Wi-fi connectivity 
-
 ->Wi-fi adapter which supports monitor mode 
 
 ->Computer/Laptop 
@@ -26,13 +24,15 @@ This gives a total security to the domestic WiFi.
 INSTALLATION:
 
 Go to the github repository and download the zip file or extract the file contents
-using clone link.Then directly run the software on kali linux OS.
+using clone link.Then directly run the software(SudoAuth.py) on kali linux OS.
 
 DEPENDENCIES: 
 
 ->This software runs on Kali Linux OS. 
 
-->Air crack -ng tool is required for this software to run on other Linux operating systems. 
+->Air crack -ng tool is required for this software to run on other Linux operating systems.
+
+->Make sure you have following python libraries such as subprocess,numpy,pandas,os,time etc.
 
 LANGUAGES USED: 
 
@@ -45,7 +45,7 @@ FUTURE PLANS ON THIS PROJECT:
 The team code sploit is trying to connect this working application in a
 GUI based application and will be released in later versions of the application. 
 Next we try to implement this in every household which gives the security over the WiFi.
-We're working on implementing this software in Windows os and Mac os 
+We're working on implementing this software in Windows os and Mac os.
 
 TECHNOLOGIES USED: 
 
