@@ -21,6 +21,15 @@ If you find the newly entering user anonymous or not genuine you can deny the co
 If you find the user genuine or trustworthy you can accept the user. 
 This gives a total security to the domestic WiFi. 
 
+HOW IT WORKS:
+
+Firstly the program asks for interface(default:wlan0). Then you have to select the wifi available near you. 
+That's it, now the program completely monitor the selected network. Whenever someone connects your network, you
+are notified with their MAC address, you allow or deny(1/0). If you allow he continues to stay in the network,
+else you deny, he's blocked(deauthenticated) from that network. When you DENY someone, you can conclude that 
+someone hacked your wifi password and its time to set a new strong password. This offers a complete security 
+against MITM attacks.
+
 INSTALLATION:
 
 Go to the github repository and download the zip file or extract the file contents
