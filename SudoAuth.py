@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import time
 import os
+
 from pandas import DataFrame
 import sys, select
 
@@ -35,12 +36,14 @@ print(" ")
 
 
 # step-1 : enabling monitor mode!
+global iface
 
 print("[+] Enter your wifi adapter name[1-4] : ")
 print("[+] 1.wlan0 ")
-print("[+] 2.wlan1 ")
-print("[+] 3.wlan2 ")
-print("[+] 4.wlan3 ")        
+print("[+] 2.wlan0mon ")
+print("[+] 3.wlan1 ")
+print("[+] 4.wlan2 ")
+print("[+] 5.wlan3 ")        
 cc= int(input())
 if(cc==1):
 	iface= 'wlan0' 
@@ -51,18 +54,16 @@ elif(cc==3):
 elif(cc==4):
 	iface= 'wlan3'    
 else:
-	print("Select a valid interface!! (default=wlan0) ")                                                                            #input interface supporting monitor mode
-subprocess.call(['airmon-ng', 'start' , iface ])                                                                  #changing to mode monitor         
-
+	print("Select a valid interface!! (default=wlan0) ")                                                                            #input interface supporting monitor mode    
+subprocess.call(f'airmon-ng start {iface}', shell=True)                                                          #changing to mode monitor         
 
 
 
 print(" ")
 print("[+]   **************************Loading************************ ")
+
+
 # step-2 : Displaying Wifi names
-
-
-
 
 
 p = subprocess.Popen(['airodump-ng','-w hi', iface], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)       # line-1.1
@@ -97,11 +98,15 @@ for i in range(c.size):                                                         
 
 op= int(input("[+] Select a wifi to start protection[options] : "))
 global wifi
+global bsid
 wifi= c[op-1]
-bsid= d.get(wifi)  
+bsid= d.get(wifi) 
+bsid=str(bsid)
+bsid= bsid.strip() 
 channel= cd.get(wifi)
 channel=str(channel)
-
+global cha
+cha=channel.strip()
 
 subprocess.run(['rm',' hi-01.csv'])
 subprocess.run(['rm',' hi-01.log.csv'])
@@ -128,15 +133,14 @@ def myPeriodicFunction():
 	su_no=x.shape[0]
 	exc_val=su_no+1
 	l=np.unique(ij)
-	#for i in range(x.shape[0]):
-	#	print(l[i])
 	print("[+] ***********************Loading, please wait******************************* ")
 	return su_us,su_no,exc_val                                                                            # Displaying devices connected to the selected AP (wifi) 
 
 
     
 dele()
-pp= subprocess.Popen(['airodump-ng', iface , '--bssid', bsid ,'-w mon' ], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)             # monitoring specific AP (wifi)
+
+pp= subprocess.Popen([f'airodump-ng', iface , '--bssid', bsid , '--channel', cha ,'-w mon' ], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)              # monitoring specific AP (wifi)
 
 for i in range(2):
 	time.sleep(8)
@@ -146,38 +150,13 @@ for i in range(2):
 pp.kill()    
 dele()
 
-# su-us= super user mac addresses( genuine users/ existing users )
-# su_no= no.of super user 
-# exc_val= conditional value. ( for if condition ) 
+#step-4: main functions
 
+def bruteforce_usercheck(a,b,c,pre_mac,pre_no,pre_ex,count):
+	qq=subprocess.Popen([f'airodump-ng', iface , '--bssid', bsid ,'--channel' , cha , '-w mon' ], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE) 
 
-
-
-# step 4: deauthentication
-
-
-
-def de_auth(ap,tar,inter):         # pass ap= access point (wifi)  mac address, tar= target client (hacker) mac address, inter= interface wifi adaptor ( supporting monitor mode ).
-	da= subprocess.Popen(['aireplay-ng', '--deauth', '10', '-a', ap ,'-c', tar, inter ], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)         # deauthentication attack.
-    
-
-
-
-# step-5 increment
-"""
-def counter():
-	ss,o,p = select.select( [sys.stdin], [],[], 15 )
-
-	if (ss=='y'):
-		ss='y'
-	else:
-		ss='n'
-	return ss
-"""
-
-def bruteforce_usercheck(a,b,c,pre_mac,pre_no,pre_ex,winame,ifc,count):
 	os.system('clear')
-	print("                             >>  Wi-Fi is under protection <<                              ")     
+	print("                                   >>  Wi-Fi is under protection <<                              ")     
 	print(" ")               
 	print(" ") 
 	print(" *********please wait, loading*********")
@@ -185,7 +164,7 @@ def bruteforce_usercheck(a,b,c,pre_mac,pre_no,pre_ex,winame,ifc,count):
 	print(" ")
 	
 	if(count==6):
-		ff.kill
+		ff.kill                                                                                       # this lines of code help the wifi adaptor to rest for 15 seconds after every 6 checks
 		time.sleep(15)
 		count=0
 		return a,b,c,pre_mac,pre_no,pre_ex,count
@@ -193,26 +172,24 @@ def bruteforce_usercheck(a,b,c,pre_mac,pre_no,pre_ex,winame,ifc,count):
 	for i in range(2):
 		time.sleep(7)
 		try:
-			df=pd.read_csv(" mon-01.csv", usecols=[0])
+			df=pd.read_csv(" mon-01.csv", usecols=[0])                                           # this lines of code reads values of the captures data of a wifi
 		except:
-			#print("excfkla;jflajfaskl;fjas;fjas;klfjask;fjask;dlfj;")     #checking
 			qq.kill
 			dele()
 			time.sleep(10)
 			return a,b,c,pre_mac,pre_no,pre_ex,count
-		#print(i)
+	
 	qq.kill()
 	f= DataFrame(df)
 	x=df.drop(0,0)
 	x=x.drop(1,0)
-            #checking purpose
 	ij=np.array(x)
 	us=ij
 	no=x.shape[0]
 	val=no+1
 	l=np.unique(ij)
 	for i in range(x.shape[0]):
-		print(f"[+] {i+1})",l[i])
+		print(f"[+] {i+1})",l[i])                                                                     # this prints the connected users of a wifi
 		
 	k=0
 
@@ -220,26 +197,21 @@ def bruteforce_usercheck(a,b,c,pre_mac,pre_no,pre_ex,winame,ifc,count):
 		
 	for i in a:
     		if(i in us): 
-        		temp.append(i)
-        		#print("flagged")                #checking prupose
+        		temp.append(i)                                                                         # checking the current user with the previous iteration users
         		
-
-                        #checking purpose
 	a=np.array(temp)
 	a=a.reshape(-1,1)
 	b=a.shape[0]
 	c=b+1
-	#print(b,c)
 	
 	new_bsid=[]
 	for i in us:
     		if((i in pre_mac)): 
-        		continue
+        		continue                                                                              # checking new devices connecting to the wifi
     		else:
         		new_bsid.append(i)
         
 	new_bsid=np.array(new_bsid)
-	#new_bsid= np.unique(new_bsid)
 	us=np.unique(us)
 	pre_mac=np.unique(pre_mac)
 	
@@ -248,8 +220,7 @@ def bruteforce_usercheck(a,b,c,pre_mac,pre_no,pre_ex,winame,ifc,count):
 			continue
 		else:
 			print("[+] New user detected: ",i)
-			print("[+] (1/0) ")
-			#ss,o,p = select.select( [sys.stdin], [],[], 15 )
+			print("[+] (1/0) ")                                                                   # here the new user is put forword the screen
 			ss= int(input())
 			print(ss)
 			oi=str(i)
@@ -257,24 +228,19 @@ def bruteforce_usercheck(a,b,c,pre_mac,pre_no,pre_ex,winame,ifc,count):
 			if(ss==1):
 				pass
 			else:
-			
-				subprocess.run([f" aireplay-ng -0 15 -e {wifi} -a {winame} -c {oi} {ifc} "],shell=True) 
-				
-				
-				
+				os.system(f" aireplay-ng -0 15 -a {bsid} -c {oi} {iface} ")			      # you can allow or deny, if denied they are removed from the wifi network
 
 	for i in range(0, len(us)):    
 		for j in range(i+1, len(us)):  
 			if(us[i] == us[j]):  
-				subprocess.Popen(['aireplay-ng', '--deauth 100', '-a', winame ,'-c', us[j], ifc ], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+				subprocess.run([f" aireplay-ng -0 15 -a {bsid} -c {oi} {iface} "],shell=True)          # if found duplicate devices, tthe duplicate device is automatically removed from the network
+
 	dele()
 	time.sleep(2.5)
-	return a,b,c,us,no,val,count,
+	return a,b,c,us,no,val,count
 
-subprocess.call(f'ifconfig {iface} down', shell=True)
-subprocess.call(f'iwconfig {iface} channel {channel}', shell=True)
-subprocess.call(f'ifconfig {iface} up', shell=True)
-#subprocess.run([f'iwconfig {iface} channel {channel}'])
+
+
 uss=su_us
 noo=su_no
 vaa=exc_val
@@ -282,19 +248,13 @@ mk=0
 
 global qq
 while (True):
-	qq= subprocess.Popen([f'airodump-ng', iface , '--bssid', bsid ,'-w mon' ], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE) 
 	
 	time.sleep(3)
 	
-	su_us,su_no,exc_val,uss,noo,vaa,mk = bruteforce_usercheck(su_us,su_no,exc_val,uss,noo,vaa,bsid,iface,mk)
+	su_us,su_no,exc_val,uss,noo,vaa,mk = bruteforce_usercheck(su_us,su_no,exc_val,uss,noo,vaa,mk)                     # this will check infinitely, thus ensureing security to a wifi network.
 
 	
 	
 	
 	
 	
-
-
-
-
-    
