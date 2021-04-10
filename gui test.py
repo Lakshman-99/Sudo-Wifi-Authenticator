@@ -1,6 +1,5 @@
 #final
 
-
 ##Importing functions
 from tkinter import *
 from tkinter.messagebox import *
