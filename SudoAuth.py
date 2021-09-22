@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import time
 import os
-
+import requests
 from pandas import DataFrame
 import sys, select
 
@@ -27,7 +27,7 @@ print(" ")
 
 print("  . '   .        __        .   ' .        >> Sudo Wifi Authenticator 1.0         ")
 print(" :     :   '    (||)   '    :     :       >> A wifi adminstrator.                ")
-print(" :     :   '    /--\   '    :     :       >> Maintained by code sploit.          ")
+print(" :     :   '    /--\   '    :     :       >> Maintained by Code Sploit.          ")
 print("  ' .   '      /----\      '    .'                                               ")
 
 
@@ -55,10 +55,20 @@ elif(cc==4):
 	iface= 'wlan3'    
 else:
 	print("Select a valid interface!! (default=wlan0) ")                                                                            #input interface supporting monitor mode    
-subprocess.call(f'airmon-ng start {iface}', shell=True)                                                          #changing to mode monitor         
+subprocess.call(f'airmon-ng start {iface}', shell=True)                                                                            #changing to mode monitor         
 
 
-
+##################################
+def current_path():
+    print("Current working directory before")
+    print(os.getcwd())
+    print()
+   
+   
+# Driver's code
+# Printing CWD before
+current_path()
+##################################
 print(" ")
 print("[+]   **************************Loading************************ ")
 
@@ -147,16 +157,38 @@ for i in range(2):
 	su_us,su_no,exc_val = myPeriodicFunction()
 
 
+
 pp.kill()    
 dele()
+###############################################################
+#sms function
+
+
+def msg(mess):
+
+	url = "https://www.fast2sms.com/dev/bulk"
+
+
+
+	payload = f"sender_id=FSTSMS&message={mess}&language=english&route=p&numbers=6381675281,8667688729,9092269687,9498063020"
+
+	headers = {
+		'authorization': "B7UXClFIymn8MfJrzSD4ERs0Qd935WYT2NiVoHGhLbat1ucwAKno2XEcK8GIyTuh6Zlq3MUvHxYpFDm0",
+		'Content-Type': "application/x-www-form-urlencoded",
+		'Cache-Control': "no-cache",
+		}
+	response = requests.request("POST", url, data=payload, headers=headers)
+	print(response.text)
+################################################################
 
 #step-4: main functions
+
 
 def bruteforce_usercheck(a,b,c,pre_mac,pre_no,pre_ex,count):
 	qq=subprocess.Popen([f'airodump-ng', iface , '--bssid', bsid ,'--channel' , cha , '-w mon' ], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE) 
 
 	os.system('clear')
-	print("                                   >>  Wi-Fi is under protection <<                              ")     
+	print("                                                                  >>  Wi-Fi is under protection <<                              ")     
 	print(" ")               
 	print(" ") 
 	print(" *********please wait, loading*********")
@@ -228,12 +260,17 @@ def bruteforce_usercheck(a,b,c,pre_mac,pre_no,pre_ex,count):
 			if(ss==1):
 				pass
 			else:
-				os.system(f" aireplay-ng -0 15 -a {bsid} -c {oi} {iface} ")			      # you can allow or deny, if denied they are removed from the wifi network
+				mess="SOMEONE ENTERED YOUR WIFI"
+				msg(mess)
+				os.system(f"python3 rem.py {oi} {iface}")
+							               # you can allow or deny, if denied they are removed from the wifi network
 
 	for i in range(0, len(us)):    
 		for j in range(i+1, len(us)):  
-			if(us[i] == us[j]):  
-				subprocess.run([f" aireplay-ng -0 15 -a {bsid} -c {oi} {iface} "],shell=True)          # if found duplicate devices, tthe duplicate device is automatically removed from the network
+			if(us[i] == us[j]): 
+				mess="YOUR WIFI IS HACKED"
+				msg(mess) 
+				os.system(f"python3 rem.py {oi} {iface}")                                       # if found duplicate devices, tthe duplicate device is automatically removed from the network
 
 	dele()
 	time.sleep(2.5)
